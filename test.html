@@ -40,28 +40,28 @@
         <div class="header-row">
             <h2>⚡️魔法轉運站</h2>
             <div style="display:flex; align-items:center; gap:10px;">
-                <span id="msg-top" class="inline-msg">🐾 你的護法已現身</span>
-                <button id="pasteBtn" onclick="pasteFromClipboard()">💡 疾疾 護法現身</button>
+                <span id="msg-top" class="inline-msg">🐾你的護法已現身</span>
+                <button id="pasteBtn" onclick="pasteFromClipboard()">💡疾疾 護法現身</button>
             </div>
         </div>
-        <textarea id="input" placeholder="貼上 Markdown 內容或表格..."></textarea>
+        <textarea id="input" placeholder="content速速前🌟"></textarea>
         <div class="btn-grid">
             <div style="display:flex; align-items:center; gap:8px;">
-                <button class="full-copy-btn" onclick="copyFullPreview(this)">✨ 超強力雙雙製</button>
-                <span class="inline-msg">✅ 超強力雙雙製大成功！</span>
+                <button class="full-copy-btn" onclick="copyFullPreview(this)">✨超強力雙雙製</button>
+                <span class="inline-msg">✅超強力雙雙製大成功！</span>
             </div>
-            <button class="clear-btn" onclick="clearInput()">掃帚 🧹 空空遺忘</button>
+            <button class="clear-btn" onclick="clearInput()"🧹空空遺忘</button>
         </div>
     </div>
 
     <div id="outputArea"></div>
 
     <div class="stash-header" style="display:flex; justify-content:space-between; align-items:center; width:100%; margin:20px 0 10px;">
-        <h3 style="margin:0; color:var(--text-sec); font-size: 1rem;">📚️ 霍格華茲圖書館</h3>
+        <h3 style="margin:0; color:var(--text-sec); font-size: 1rem;">📚️霍格華茲圖書館</h3>
         <div style="display:flex; align-items:center; gap:10px;">
-            <span id="msg-stash-all" class="inline-msg">✅ 超強力雙雙製大成功！</span>
-            <button onclick="copyAllStash(this)" style="background:var(--primary); color:white; padding:8px 12px; border-radius:10px; cursor:pointer; border:none; font-weight:600;">✨ 超強力雙雙製</button>
-            <button onclick="clearAllStash()" style="background:#fff; color:var(--danger); border:1px solid #fee; padding:8px 12px; border-radius:10px; cursor:pointer;">🧹 一忘皆空</button>
+            <span id="msg-stash-all" class="inline-msg">✅超強力雙雙製大成功！</span>
+            <button onclick="copyAllStash(this)" style="background:var(--primary); color:white; padding:8px 12px; border-radius:10px; cursor:pointer; border:none; font-weight:600;">✨超強力雙雙製</button>
+            <button onclick="clearAllStash()" style="background:#fff; color:var(--danger); border:1px solid #fee; padding:8px 12px; border-radius:10px; cursor:pointer;">🧹空空遺忘</button>
         </div>
     </div>
     <div id="stashContainer"></div>
@@ -125,7 +125,7 @@
     function renderItem(data, cont, type) {
         const wrapper = document.createElement('div');
         wrapper.className = "item-wrapper";
-        wrapper.innerHTML = `<div class="item-action-bar"><span class="inline-msg">惡作劇完成✅</span><button class="mini-btn" style="background:#f0f0f0;" onclick="copyDirect(this)">📋 雙雙製</button><button class="mini-btn" style="background:#e8f8f5; color:var(--primary); border:1.5px solid var(--primary);" onclick="stashThis(this)">📩 溫咖癲啦唯啊薩</button></div><div class="pure-content"></div>`;
+        wrapper.innerHTML = `<div class="item-action-bar"><span class="inline-msg">惡作劇完成✅</span><button class="mini-btn" style="background:#f0f0f0;" onclick="copyDirect(this)">📋雙雙製</button><button class="mini-btn" style="background:#e8f8f5; color:var(--primary); border:1.5px solid var(--primary);" onclick="stashThis(this)">📩溫咖癲啦唯啊薩</button></div><div class="pure-content"></div>`;
         const contentDiv = wrapper.querySelector('.pure-content');
         if (type === 'table') {
             const t = document.createElement('table');
@@ -159,8 +159,8 @@
                 <div class="stash-content-editable" contenteditable="true" oninput="updateStash(${i})">${sanitize(item.html)}</div>
                 <div class="stash-footer">
                     <span class="inline-msg">惡作劇完成✅</span>
-                    <button class="mini-btn" style="background:#eee;" onclick="copyStashDirect(${i}, this)">📋 雙雙製</button>
-                    <button class="mini-btn" style="background:var(--primary); color:white;" onclick="saveManual(${i}, this)">💾 O.W.L.s交卷</button>
+                    <button class="mini-btn" style="background:#eee;" onclick="copyStashDirect(${i}, this)">📋雙雙製</button>
+                    <button class="mini-btn" style="background:var(--primary); color:white;" onclick="saveManual(${i}, this)">💾O.W.L.s交卷</button>
                 </div>
             </div>
         `).join('');
