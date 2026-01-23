@@ -16,13 +16,13 @@
         /* 1. 標題區塊：上下結構 + 左右極端對稱 */
         .header-row, .stash-header { 
             display: flex; 
-            flex-wrap: wrap; 
-            justify-content: space-between; 
+            flex-wrap: nowrap; 
+            justify-content: center; 
             align-items: flex-end; 
             margin-bottom: 16px; 
         }
         h2, h3 { 
-            flex: none; /* 強制標題佔滿上方一行 */
+            flex: 0 1 auto; /* 強制標題佔滿上方一行 */
             font-size: 1.2rem; 
             margin: 0; 
             color: var(--primary); 
@@ -37,6 +37,7 @@
             justify-content: flex-end; 
             align-items: center; 
             gap: 12px; 
+            flex-shrink: 0;
         }
     
         #pasteBtn { background: #e8f8f5; color: var(--primary); border: 1.5px solid var(--primary); padding: 8px 15px; border-radius: 10px; font-weight: 600; font-size: 13px; cursor: pointer; white-space: nowrap; }
