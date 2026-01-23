@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'; object-src 'none';">
-    <title>⚡️魔法轉運站</title>
+    <title>⚡️疾疾 表格現身</title>
     <style>
         :root { --primary: #1abc9c; --primary-dark: #16a085; --danger: #e74c3c; --bg: #f4f9f4; --card-bg: #ffffff; --text: #2c3e50; --text-sec: #7f8c8d; --border: #ccd6d6; }
         
@@ -30,7 +30,7 @@
             align-items: center; 
             gap: 12px; 
         }
-        /* 讓裝載「貼上按鈕」或「圖書館控制鈕」強制靠右 */
+        /* 讓裝載「貼上按鈕」或「儲思盆控制鈕」強制靠右 */
         .header-row > div, .stash-header > div { 
             width: 100%; 
             display: flex; 
@@ -45,7 +45,7 @@
         /* 2. 主要按鈕：非對稱並排 (左寬右窄) */
         .btn-grid { 
             display: grid; 
-            grid-template-columns: 1.8fr 1fr; /* 給予超強力雙雙製更多空間 */
+            grid-template-columns: 1.8fr 1.1fr; /* 給予超強力雙雙製更多空間 */
             gap: 8px; 
             margin-top: 15px; 
             align-items: center; 
@@ -76,19 +76,19 @@
 <div class="container">
     <div class="card">
         <div class="header-row">
-            <h2>⚡️魔法轉運站</h2>
+            <h2>⚡️疾疾 表格現身</h2>
             <div style="display:flex; align-items:center; gap:10px;">
-                <span id="msg-top" class="inline-msg">🐾你的護法已現身</span>
-                <button id="pasteBtn" onclick="pasteFromClipboard()">💡疾疾 護法現身</button>
+                <span id="msg-top" class="inline-msg">🐾召喚成功</span>
+                <button id="pasteBtn" onclick="pasteFromClipboard()">💡Content速速前</button>
             </div>
         </div>
-        <textarea id="input" placeholder="Content速速前🌟"></textarea>
+        <textarea id="input" placeholder=""></textarea>
         <div class="btn-grid">
             <div style="display:flex; align-items:center; gap:8px;">
                 <button class="full-copy-btn" onclick="copyFullPreview(this)">✨超強力雙雙製</button>
                 <span class="inline-msg">✅</span>
             </div>
-            <button class="clear-btn" onclick="clearInput()">🧹空空遺忘</button>
+            <button class="clear-btn" onclick="clearInput()">🧹去去雜亂走</button>
         </div>
     </div>
 
@@ -109,7 +109,7 @@
     let stash = JSON.parse(localStorage.getItem('commander_stash_v8_0') || '[]');
     window.onload = () => renderStash();
 
-    // 關鍵防禦函數：移除所有危險標籤與 JavaScript 屬性
+    // 黑魔法防禦術：移除所有危險標籤與 JavaScript 屬性
     function sanitize(html) {
         const doc = new DOMParser().parseFromString(html, 'text/html');
         // 移除所有 script 標籤
