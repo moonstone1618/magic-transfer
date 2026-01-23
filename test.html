@@ -6,7 +6,6 @@
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'; object-src 'none';">
     <title>⚡️魔法轉運站</title>
     <style>
-        /* 保留原有的魔法變數 */
         :root { --primary: #1abc9c; --primary-dark: #16a085; --danger: #e74c3c; --bg: #f4f9f4; --card-bg: #ffffff; --text: #2c3e50; --text-sec: #7f8c8d; --border: #ccd6d6; }
         
         /* 基礎排版 */
@@ -14,7 +13,7 @@
         .container { width: 100%; max-width: 650px; }
         .card { background: var(--card-bg); padding: 20px; border-radius: 18px; box-shadow: 0 5px 25px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.02); }
         
-        /* 1. 標題區塊重構：上下結構 + 左右極端對稱 */
+        /* 1. 標題區塊：上下結構 + 左右極端對稱 */
         .header-row, .stash-header { 
             display: flex; 
             flex-wrap: wrap; 
@@ -29,9 +28,9 @@
             color: var(--primary); 
             display: flex; 
             align-items: center; 
-            gap: 8px; 
+            gap: 12px; 
         }
-        /* 讓裝載「貼上按鈕」或「圖書館控制鈕」的容器強制靠右 */
+        /* 讓裝載「貼上按鈕」或「圖書館控制鈕」強制靠右 */
         .header-row > div, .stash-header > div { 
             width: 100%; 
             display: flex; 
@@ -46,7 +45,7 @@
         /* 2. 主要按鈕：非對稱並排 (左寬右窄) */
         .btn-grid { 
             display: grid; 
-            grid-template-columns: 1.6fr 1fr; /* 給予雙雙製更多空間 */
+            grid-template-columns: 1.8fr 1fr; /* 給予雙雙製更多空間 */
             gap: 8px; 
             margin-top: 15px; 
             align-items: center; 
@@ -55,7 +54,7 @@
         .full-copy-btn { background: var(--primary); color: white; }
         .clear-btn { background: #f1f3f4; color: var(--text-sec); }
     
-        /* 以下保留原本的所有功能樣式 */
+        /* 功能樣式 */
         .item-wrapper { background: white; border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 1px solid #f1f1f1; }
         .item-action-bar { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-bottom: 8px; border-bottom: 1px dashed #eee; padding-bottom: 5px; }
         .mini-btn { padding: 4px 10px; font-size: 11px; border-radius: 6px; font-weight: bold; cursor: pointer; border: none; }
@@ -87,7 +86,7 @@
         <div class="btn-grid">
             <div style="display:flex; align-items:center; gap:8px;">
                 <button class="full-copy-btn" onclick="copyFullPreview(this)">✨超強力雙雙製</button>
-                <span class="inline-msg">✅超強力雙雙製大成功！</span>
+                <span class="inline-msg">✅</span>
             </div>
             <button class="clear-btn" onclick="clearInput()">🧹空空遺忘</button>
         </div>
@@ -97,8 +96,8 @@
 
     <div class="stash-header" style="display:flex; justify-content:space-between; align-items:center; width:100%; margin:20px 0 10px;">
         <h3 style="margin:0; color:var(--text-sec); font-size: 1rem;">📚️霍格華茲圖書館</h3>
-        <div style="display:flex; align-items:center; gap:10px;">
-            <span id="msg-stash-all" class="inline-msg">✅超強力雙雙製大成功！</span>
+        <div style="display:flex; align-items:center; gap:12px;">
+            <span id="msg-stash-all" class="inline-msg">✅</span>
             <button onclick="copyAllStash(this)" style="background:var(--primary); color:white; padding:8px 12px; border-radius:10px; cursor:pointer; border:none; font-weight:600;">✨超強力雙雙製</button>
             <button onclick="clearAllStash()" style="background:#fff; color:var(--danger); border:1px solid #fee; padding:8px 12px; border-radius:10px; cursor:pointer;">🧹空空遺忘</button>
         </div>
