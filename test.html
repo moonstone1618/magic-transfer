@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-SCRIPT_HASH_PLACEHOLDER'; style-src 'sha256-STYLE_HASH_PLACEHOLDER'; base-uri 'none'; form-action 'none';">
     <title>⚡️疾疾 表格現身</title>
     <style>
         :root { --primary: #1abc9c; --primary-dark: #16a085; --danger: #e74c3c; --bg: #f4f9f4; --card-bg: #ffffff; --text: #2c3e50; --text-sec: #7f8c8d; --border: #ccd6d6; }
@@ -13,7 +12,7 @@
         .container { width: 100%; max-width: 650px; }
         .card { background: var(--card-bg); padding: 20px; border-radius: 18px; box-shadow: 0 5px 25px rgba(0,0,0,0.05); margin-bottom: 16px; border: 1px solid rgba(0,0,0,0.02); transition: background 0.5s; }
         
-        /* 1. 標題區塊:左右對稱 - 修改為上下排列 */
+        /* 1. 標題區塊:左右對稱 - 修改按鈕區為垂直排列 */
         .header-row, .stash-header { 
             display: flex; 
             flex-wrap: nowrap; 
@@ -31,14 +30,17 @@
             align-items: center; 
             gap: 8px; 
         }
-        /* 修改:按鈕區域改為垂直排列 */
-        .header-row > div { 
-            width: auto; 
+        /* 修改:右側按鈕區改為垂直堆疊 */
+        .header-row > .btn-group { 
             display: flex; 
-            flex-direction: column; /* 改為垂直排列 */
-            justify-content: flex-end; 
+            flex-direction: column;
             align-items: flex-end; 
-            gap: 6px; /* 縮小間距 */
+            gap: 6px; 
+        }
+        .header-row > .btn-group > div {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .stash-header > div { 
             width: auto; 
@@ -48,25 +50,45 @@
             gap: 8px; 
         }
     
-        /* 修改:縮小按鈕尺寸 */
+        /* 縮小頂部按鈕 */
         #pasteBtn, #reverseToggle { 
             background: #e8f8f5; 
             color: var(--primary); 
             border: 1.5px solid var(--primary); 
-            padding: 6px 12px; /* 縮小 padding */
-            border-radius: 8px; /* 縮小圓角 */
+            padding: 6px 12px; 
+            border-radius: 8px; 
             font-weight: 600; 
-            font-size: 12px; /* 縮小字體 */
+            font-size: 12px; 
             cursor: pointer; 
             white-space: nowrap; 
         }
+        #reverseToggle {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 2px 8px rgba(102,126,234,0.3);
+        }
         
-        textarea { width: 100%; height: 160px; border: 2px solid #edf2f2; border-radius: 15px; padding: 12px; font-size: 14px; box-sizing: border-box; resize: none; background: #fdfdfd; line-height: 1.5; outline: none; transition: background 0.5s, color 0.5s, border-color 0.5s; font-family: monospace; /* 新增:等寬字體以正確顯示表格 */ }
+        textarea { 
+            width: 100%; 
+            height: 160px; 
+            border: 2px solid #edf2f2; 
+            border-radius: 15px; 
+            padding: 12px; 
+            font-size: 14px; 
+            box-sizing: border-box; 
+            resize: none; 
+            background: #fdfdfd; 
+            line-height: 1.5; 
+            outline: none; 
+            transition: background 0.5s, color 0.5s, border-color 0.5s;
+            font-family: 'Courier New', monospace; /* 等寬字體顯示表格 */
+        }
         
         /* 2. 主要按鈕:非對稱並排 (左寬右窄) */
         .btn-grid { 
             display: grid; 
-            grid-template-columns: 1.8fr 1.1fr; /* 給予超強力雙雙製更多空間 */
+            grid-template-columns: 1.8fr 1.1fr; 
             gap: 8px; 
             margin-top: 15px; 
             align-items: center; 
@@ -90,7 +112,7 @@
         .show-msg { opacity: 1; }
         .del-btn { position: absolute; top: 12px; right: 12px; color: #ccc; cursor: pointer; font-size: 20px; }
 
-        /* ====== 🌙 夜間模式樣式 ====== */
+        /* 夜間模式 */
         body.night-mode { --bg: #0a1628; --card-bg: #1a2942; --text: #e0e6ed; --text-sec: #9aa5b1; --border: #2d3e56; }
         body.night-mode .card { box-shadow: 0 5px 25px rgba(0,0,0,0.3); }
         body.night-mode textarea { background: #0f1d2e; color: #e0e6ed; border-color: #2d3e56; }
@@ -99,18 +121,8 @@
         body.night-mode table,
         body.night-mode .stash-content-editable { background: #0f1d2e; }
         body.night-mode th { background-color: #1a2942 !important; color: #7dd3c0; }
-        body.night-mode #pasteBtn, body.night-mode #reverseToggle { background: #1a2942; border-color: #7dd3c0; color: #7dd3c0; }
-
-        /* 反轉模式切換按鈕 */
-        #reverseToggle { 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-            color: white; 
-            border: none; 
-            box-shadow: 0 3px 10px rgba(102,126,234,0.3);
-            transition: transform 0.2s;
-        }
-        #reverseToggle:hover { transform: translateY(-2px); }
-        #reverseToggle:active { transform: translateY(0); }
+        body.night-mode #pasteBtn { background: #1a2942; border-color: #7dd3c0; color: #7dd3c0; }
+        body.night-mode #reverseToggle { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
     </style>
     
 </head>
@@ -120,21 +132,21 @@
     <div class="card">
         <div class="header-row">
             <h2>⚡️疾疾 表格現身</h2>
-            <div>
-                <button id="reverseToggle">🌙呼呼 前咒現</button>
-                <div style="display:flex; align-items:center; gap:8px;">
+            <div class="btn-group">
+                <button id="reverseToggle" onclick="toggleReverseMode()">🌙呼呼 前咒現</button>
+                <div>
                     <span id="msg-top" class="inline-msg">🐾</span>
-                    <button id="pasteBtn">💡Content速速前</button>
+                    <button id="pasteBtn" onclick="pasteFromClipboard()">💡Content速速前</button>
                 </div>
             </div>
         </div>
         <textarea id="input" placeholder=""></textarea>
         <div class="btn-grid">
             <div style="display:flex; align-items:center; gap:8px;">
-                <button class="full-copy-btn">✨超強力雙雙製</button>
+                <button class="full-copy-btn" onclick="copyFullPreview(this)">✨超強力雙雙製</button>
                 <span class="inline-msg">🐾</span>
             </div>
-            <button class="clear-btn">🧹去去雜亂走</button>
+            <button class="clear-btn" onclick="clearInput()">🧹去去雜亂走</button>
         </div>
     </div>
 
@@ -144,8 +156,8 @@
         <h3 style="margin:0; color:var(--primary); font-size: 1.15rem;">🔮儲思盆</h3>
         <div style="display:flex; align-items:center; gap:15px;">
             <span id="msg-stash-all" class="inline-msg">🐾</span>
-            <button id="copyAllStashBtn" style="background:var(--primary); color:white; padding:8px 12px; border-radius:10px; cursor:pointer; border:none; font-weight:600;">✨超強力雙雙製</button>
-            <button id="clearAllStashBtn" style="background:#fff; color:var(--danger); border:1px solid #fee; padding:8px 12px; border-radius:10px; cursor:pointer;">🧹空空遺忘</button>
+            <button onclick="copyAllStash(this)" style="background:var(--primary); color:white; padding:8px 12px; border-radius:10px; cursor:pointer; border:none; font-weight:600;">✨超強力雙雙製</button>
+            <button onclick="clearAllStash()" style="background:#fff; color:var(--danger); border:1px solid #fee; padding:8px 12px; border-radius:10px; cursor:pointer;">🧹空空遺忘</button>
         </div>
     </div>
     <div id="stashContainer"></div>
@@ -154,7 +166,8 @@
 <script>
     let stash = JSON.parse(localStorage.getItem('commander_stash_v8_0') || '[]');
     let isReverseMode = JSON.parse(localStorage.getItem('reverse_mode') || 'false');
-    
+    window.onload = () => { renderStash(); applyReverseMode(); };
+
     // 黑魔法防禦術:移除所有危險標籤與 JavaScript 屬性
     function sanitize(html) {
         const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -193,10 +206,8 @@
         output.innerHTML = ""; if(!raw.trim()) return;
 
         if (isReverseMode) {
-            // 🌙 反轉模式:表格轉Markdown (修正:支援HTML表格解析)
             processTableToMarkdown(raw, output);
         } else {
-            // ☀️ 正常模式:Markdown轉表格
             processMarkdownToTable(raw, output);
         }
     }
@@ -216,13 +227,11 @@
     }
 
     function processTableToMarkdown(raw, output) {
-        // 修正:先嘗試解析為HTML
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = raw;
         const tables = tempDiv.querySelectorAll('table');
         
         if (tables.length > 0) {
-            // 找到HTML表格
             tables.forEach(table => {
                 const rows = Array.from(table.rows);
                 let markdown = '';
@@ -239,15 +248,14 @@
                 renderItem(markdown, output, 'markdown');
             });
         } else {
-            // 沒找到HTML表格,顯示提示
-            renderItem("⚠️ 未偵測到HTML表格,請貼上完整的HTML表格標籤內容(包含<table>...)</table>)", output, 'text');
+            renderItem("⚠️ 未偵測到HTML表格\n請貼上完整的<table>...</table>標籤內容", output, 'text');
         }
     }
 
     function renderItem(data, cont, type) {
         const wrapper = document.createElement('div');
         wrapper.className = "item-wrapper";
-        wrapper.innerHTML = `<div class="item-action-bar"><span class="inline-msg">惡作劇完成🐾</span><button class="mini-btn" style="background:#f0f0f0;">📋雙雙製</button><button class="mini-btn" style="background:#e8f8f5; color:var(--primary); border:1.5px solid var(--primary);">📩溫咖癲啦唯啊薩</button></div><div class="pure-content"></div>`;
+        wrapper.innerHTML = `<div class="item-action-bar"><span class="inline-msg">惡作劇完成🐾</span><button class="mini-btn" style="background:#f0f0f0;" onclick="copyDirect(this)">📋雙雙製</button><button class="mini-btn" style="background:#e8f8f5; color:var(--primary); border:1.5px solid var(--primary);" onclick="stashThis(this)">📩溫咖癲啦唯啊薩</button></div><div class="pure-content"></div>`;
         const contentDiv = wrapper.querySelector('.pure-content');
         
         if (type === 'table') {
@@ -260,7 +268,7 @@
             contentDiv.appendChild(t);
         } else if (type === 'markdown') {
             const pre = document.createElement('pre');
-            pre.style.cssText = "background:#f5f5f5; padding:15px; border-radius:8px; overflow-x:auto; font-family:monospace; font-size:13px; line-height:1.6;";
+            pre.style.cssText = "background:#f5f5f5; padding:15px; border-radius:8px; overflow-x:auto; font-family:'Courier New',monospace; font-size:13px; line-height:1.6; white-space:pre;";
             pre.innerText = data;
             contentDiv.appendChild(pre);
         } else {
@@ -271,11 +279,6 @@
             p.innerText = data;
             contentDiv.appendChild(p);
         }
-        
-        // 重新綁定事件
-        wrapper.querySelector('.mini-btn[style*="f0f0f0"]').onclick = function() { copyDirect(this); };
-        wrapper.querySelector('.mini-btn[style*="e8f8f5"]').onclick = function() { stashThis(this); };
-        
         cont.appendChild(wrapper);
     }
 
@@ -289,25 +292,16 @@
         const cont = document.getElementById('stashContainer');
         cont.innerHTML = stash.map((item, i) => `
             <div class="stash-card" data-index="${i}">
-                <span class="del-btn">&times;</span>
-                <input type="text" class="stash-title-input" value="${item.title}">
-                <div class="stash-content-editable" contenteditable="true">${sanitize(item.html)}</div>
+                <span class="del-btn" onclick="deleteStash(${i})">&times;</span>
+                <input type="text" class="stash-title-input" value="${item.title}" onchange="updateStash(${i})">
+                <div class="stash-content-editable" contenteditable="true" oninput="updateStash(${i})">${sanitize(item.html)}</div>
                 <div class="stash-footer">
                     <span class="inline-msg">惡作劇完成🐾</span>
-                    <button class="mini-btn" style="background:#eee;">📋雙雙製</button>
-                    <button class="mini-btn" style="background:var(--primary); color:white;">💾O.W.L.s交卷</button>
+                    <button class="mini-btn" style="background:#eee;" onclick="copyStashDirect(${i}, this)">📋雙雙製</button>
+                    <button class="mini-btn" style="background:var(--primary); color:white;" onclick="saveManual(${i}, this)">💾O.W.L.s交卷</button>
                 </div>
             </div>
         `).join('');
-        
-        // 重新綁定所有儲思盆事件
-        document.querySelectorAll('.stash-card').forEach((card, idx) => {
-            card.querySelector('.del-btn').onclick = () => deleteStash(idx);
-            card.querySelector('.stash-title-input').onchange = () => updateStash(idx);
-            card.querySelector('.stash-content-editable').oninput = () => updateStash(idx);
-            card.querySelectorAll('.mini-btn')[0].onclick = function() { copyStashDirect(idx, this); };
-            card.querySelectorAll('.mini-btn')[1].onclick = function() { saveManual(idx, this); };
-        });
     }
 
     function updateStash(idx) {
@@ -365,7 +359,7 @@
         document.body.style.backgroundColor = originalBg;
     }
 
-    // ====== 🌙 反轉模式核心功能 ======
+    // 反轉模式功能
     function toggleReverseMode() {
         isReverseMode = !isReverseMode;
         localStorage.setItem('reverse_mode', JSON.stringify(isReverseMode));
@@ -381,29 +375,13 @@
         if (isReverseMode) {
             document.body.classList.add('night-mode');
             toggleBtn.innerHTML = '☀️呼呼 咒回歸';
-            toggleBtn.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
             inputArea.placeholder = '貼上HTML表格(包含<table>標籤)...';
         } else {
             document.body.classList.remove('night-mode');
             toggleBtn.innerHTML = '🌙呼呼 前咒現';
-            toggleBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
             inputArea.placeholder = '';
         }
     }
-
-    // 初始化
-    window.addEventListener('DOMContentLoaded', () => {
-        renderStash();
-        applyReverseMode();
-        
-        // 綁定主要按鈕事件
-        document.getElementById('reverseToggle').onclick = toggleReverseMode;
-        document.getElementById('pasteBtn').onclick = pasteFromClipboard;
-        document.querySelector('.full-copy-btn').onclick = function() { copyFullPreview(this); };
-        document.querySelector('.clear-btn').onclick = clearInput;
-        document.getElementById('copyAllStashBtn').onclick = function() { copyAllStash(this); };
-        document.getElementById('clearAllStashBtn').onclick = clearAllStash;
-    });
 </script>
 </body>
 </html>
