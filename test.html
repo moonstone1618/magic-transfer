@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'; object-src 'none';">
+    <title>⚡️疾疾 表格現身</title>
+    <style>
+        :root { 
+            --primary: #1abc9c; 
+            --primary-dark: #16a085; 
+            --danger: #e74c3c; 
+            --bg: #f4f9f4; 
+            --card-bg: #ffffff; 
+            --text: #2c3e50; 
+            --text-sec: #7f8c8d; 
+            --border: #ccd6d6; 
+            --input-bg: #fdfdfd;
+        }
+        
+        /* 深藍色模式 (反向轉換) */
+        body.dark-mode { 
+            --primary: #3498db; 
+            --primary-dark: #2980b9; 
+            --bg: #1a1c2c; 
+            --card-bg: #2c2f48; 
+            --text: #ecf0f1; 
+            --text-sec: #bdc3c7; 
+            --border: #444b6e;
+            --input-bg: #1e2132;
+        }
+
+        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 15px; margin: 0; display: flex; flex-direction: column; align-items: center; transition: background 0.5s ease; }
+        .container { width: 100%; max-width: 650px; }
+        .card { background: var(--card-bg); padding: 20px; border-radius: 18px; box-shadow: 0 5px 25px rgba(0,0,0,0.1); margin-bottom: 16px; border: 1px solid rgba(0,0,0,0.02); transition: 0.3s; }
+        
+        .header-row, .stash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        h2, h3 { font-size: 1.2rem; margin: 0; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+    
+        .mode-toggle-btn { background: #34495e; color: #fff; border: none; padding: 6px 12px; border-radius: 20px; font-size: 11px; cursor: pointer; font-weight: bold; }
+        #pasteBtn { background: rgba(26, 188, 156, 0.1); color: var(--primary); border: 1.5px solid var(--primary); padding: 8px 15px; border-radius: 10px; font-weight: 600; font-size: 13px; cursor: pointer; }
+        
+        textarea { width: 100%; height: 160px; border: 2px solid var(--border); border-radius: 15px; padding: 12px; font-size: 14px; box-sizing: border-box; resize: none; background: var(--input-bg); color: var(--text); line-height: 1.5; outline: none; transition: 0.3s; }
+        
+        .btn-grid { display: grid; grid-template-columns: 1.8fr 1.1fr; gap: 8px; margin-top: 15px; }
+        button { padding: 12px 8px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 13px; }
+        .full-copy-btn { background: var(--primary); color: white; }
+        .clear-btn { background: rgba(0,0,0,0.05); color: var(--danger); }
+        body.dark-mode .clear-btn { background: rgba(255,255,255,0.1); }
+    
+        .item-wrapper { background: var(--card-bg); border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); }
+        .item-action-bar { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 8px; border-bottom: 1px dashed var(--border); padding-bottom: 5px; }
+        .mini-btn { padding: 4px 10px; font-size: 11px; border-radius: 6px; font-weight: bold; cursor: pointer; border: none; }
+        
+        table { border-collapse: collapse; width: 100%; font-size: 13px; margin: 5px 0; border: 1px solid var(--border); background: #fff; color: #333; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+        th { background-color: #f2f5f5; font-weight: 700; }
+        
+        .stash-card { background: var(--card-bg); border-radius: 15px; padding: 15px; margin-bottom: 15px; border-left: 5px solid var(--primary); position: relative; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .stash-title-input { width: 80%; border: none; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 10px; padding: 5px 0; outline: none; background: transparent; }
+        .stash-content-editable { font-size: 14px; line-height: 1.6; outline: none; padding: 5px; min-height: 20px; }
+        .inline-msg { font-size: 11px; color: var(--primary); font-weight: bold; opacity: 0; transition: 0.3s; }
+        .show-msg { opacity: 1; }
+        .del-btn { position: absolute; top: 12px; right: 12px; color: var(--text-sec); cursor: pointer; font-size: 20px; }
+    </style>
+</head>
+<body id="mainBody">
+
+<div class="container">
+    <div class="card">
+        <div class="header-row">
+            <h2 id="modeTitle">⚡️ 疾疾 表格現身</h2>
+            <button class="mode-toggle-btn" onclick="toggleMode()">🪄 呼呼 前咒現</button>
+        </div>
+        <div class="header-row">
+            <div style="font-size: 12px; color: var(--text-sec);" id="modeDesc">目前：MD 轉 一般表格</div>
+            <div>
+                <span id="msg-top" class="inline-msg">🐾</span>
+                <button id="pasteBtn" onclick="pasteFromClipboard()">💡Content速速前</button>
+            </div>
+        </div>
+        <textarea id="input" placeholder="貼上內容..."></textarea>
+        <div class="btn-grid">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <button class="full-copy-btn" onclick="copyFullPreview(this)">✨超強力雙雙製</button>
+                <span class="inline-msg">🐾</span>
+            </div>
+            <button class="clear-btn" onclick="clearInput()">🧹去去雜亂走</button>
+        </div>
+    </div>
+
+    <div id="outputArea"></div>
+
+    <div class="stash-header">
+        <h3 style="margin:0; color:var(--primary); font-size: 1.15rem;">🔮 儲思盆</h3>
+        <div style="display:flex; align-items:center; gap:15px;">
+            <span id="msg-stash-all" class="inline-msg">🐾</span>
+            <button onclick="copyAllStash(this)" style="background:var(--primary); color:white; padding:8px 12px; border-radius:10px; cursor:pointer; border:none; font-weight:600;">✨超強力雙雙製</button>
+            <button onclick="clearAllStash()" style="background:transparent; color:var(--danger); border:1px solid var(--danger); padding:8px 12px; border-radius:10px; cursor:pointer;">🧹空空遺忘</button>
+        </div>
+    </div>
+    <div id="stashContainer"></div>
+</div>
+
+<script>
+    let stash = JSON.parse(localStorage.getItem('commander_stash_v8_0') || '[]');
+    let isReverseMode = false;
+
+    window.onload = () => {
+        renderStash();
+        document.getElementById('input').addEventListener('input', processAll);
+    };
+
+    function toggleMode() {
+        isReverseMode = !isReverseMode;
+        const body = document.getElementById('mainBody');
+        const title = document.getElementById('modeTitle');
+        const desc = document.getElementById('modeDesc');
+        
+        if (isReverseMode) {
+            body.classList.add('dark-mode');
+            title.innerText = "🌙 呼呼 前咒現";
+            desc.innerText = "目前：HTML 轉 Markdown";
+        } else {
+            body.classList.remove('dark-mode');
+            title.innerText = "⚡️ 疾疾 表格現身";
+            desc.innerText = "目前：MD 轉 一般表格";
+        }
+        processAll();
+    }
+
+    // HTML 轉 Markdown 核心
+    function htmlToMd(html) {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const tables = doc.querySelectorAll('table');
+        if (tables.length === 0) return html; // 若無表格則回傳原內容
+
+        let result = "";
+        tables.forEach(table => {
+            const rows = Array.from(table.querySelectorAll('tr'));
+            rows.forEach((tr, i) => {
+                const cells = Array.from(tr.querySelectorAll('th, td')).map(c => c.innerText.trim().replace(/\n/g, " "));
+                result += "| " + cells.join(" | ") + " |\n";
+                if (i === 0) result += "| " + cells.map(() => "---").join(" | ") + " |\n";
+            });
+            result += "\n";
+        });
+        return result.trim();
+    }
+
+    function processAll() {
+        const raw = document.getElementById('input').value;
+        const output = document.getElementById('outputArea');
+        output.innerHTML = ""; if(!raw.trim()) return;
+
+        if (isReverseMode) {
+            // 反向模式：HTML -> MD
+            const md = htmlToMd(raw);
+            renderItem(md, output, 'text');
+        } else {
+            // 正向模式：MD -> HTML
+            const lines = raw.split('\n');
+            let tempTable = []; let tempText = [];
+            const flushText = () => { if (tempText.length > 0) { renderItem(tempText.join('\n'), output, 'text'); tempText = []; } };
+            const flushTable = () => { if (tempTable.length > 0) { renderItem(tempTable, output, 'table'); tempTable = []; } };
+            
+            lines.forEach(line => {
+                const isTableLine = line.includes('|') && line.split('|').length > 2;
+                const isDivider = line.match(/^[| \-:]+$/);
+                if (isTableLine && !isDivider) { flushText(); const cells = line.split('|').filter((c, i, a) => i > 0 && i < a.length - 1).map(c => c.trim()); tempTable.push(cells); }
+                else if (!isDivider) { flushTable(); tempText.push(line); }
+            });
+            flushTable(); flushText();
+        }
+    }
+
+    // 渲染、儲存、刪除等邏輯保持不變 (僅修正部分變數與樣式相容性)
+    function renderItem(data, cont, type) {
+        const wrapper = document.createElement('div');
+        wrapper.className = "item-wrapper";
+        wrapper.innerHTML = `<div class="item-action-bar"><span class="inline-msg">惡作劇完成🐾</span><button class="mini-btn" style="background:var(--border); color:var(--text);" onclick="copyDirect(this)">📋雙雙製</button><button class="mini-btn" style="background:var(--primary); color:white;" onclick="stashThis(this)">📩溫咖癲啦唯啊薩</button></div><div class="pure-content"></div>`;
+        const contentDiv = wrapper.querySelector('.pure-content');
+        if (type === 'table') {
+            const t = document.createElement('table');
+            data.forEach((row, rIdx) => {
+                const tr = document.createElement('tr');
+                row.forEach(cell => { const el = document.createElement(rIdx === 0 ? 'th' : 'td'); el.innerText = cell; tr.appendChild(el); });
+                t.appendChild(tr);
+            });
+            contentDiv.appendChild(t);
+        } else {
+            const p = document.createElement('div'); p.style.fontSize="14px"; p.style.lineHeight="1.6"; p.style.whiteSpace="pre-wrap"; p.innerText = data;
+            contentDiv.appendChild(p);
+        }
+        cont.appendChild(wrapper);
+    }
+
+    function sanitize(html) {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        doc.querySelectorAll('script, iframe, object, embed').forEach(s => s.remove());
+        return doc.body.innerHTML;
+    }
+
+    function triggerMsg(target) { if (target) { target.classList.add('show-msg'); setTimeout(() => target.classList.remove('show-msg'), 2000); } }
+    async function pasteFromClipboard() { try { const text = await navigator.clipboard.readText(); document.getElementById('input').value = text; processAll(); triggerMsg(document.getElementById('msg-top')); } catch (err) { alert("🦉 失敗"); } }
+    function clearInput() { document.getElementById('input').value = ""; document.getElementById('outputArea').innerHTML = ""; }
+    function stashThis(btn) { const contentHTML = sanitize(btn.closest('.item-wrapper').querySelector('.pure-content').innerHTML); stash.push({ title: `#${stash.length + 1}`, html: contentHTML }); saveStash(); renderStash(); triggerMsg(btn.parentElement.querySelector('.inline-msg')); }
+    function renderStash() { const cont = document.getElementById('stashContainer'); cont.innerHTML = stash.map((item, i) => `<div class="stash-card" data-index="${i}"><span class="del-btn" onclick="deleteStash(${i})">&times;</span><input type="text" class="stash-title-input" value="${item.title}" onchange="updateStash(${i})"><div class="stash-content-editable" contenteditable="true" oninput="updateStash(${i})">${sanitize(item.html)}</div><div class="stash-footer"><span class="inline-msg">惡作劇完成🐾</span><button class="mini-btn" style="background:var(--border);" onclick="copyStashDirect(${i}, this)">📋雙雙製</button><button class="mini-btn" style="background:var(--primary); color:white;" onclick="saveManual(${i}, this)">💾交卷</button></div></div>`).join(''); }
+    function updateStash(idx) { const card = document.querySelector(`.stash-card[data-index="${idx}"]`); if(card) { stash[idx].title = card.querySelector('.stash-title-input').value; stash[idx].html = sanitize(card.querySelector('.stash-content-editable').innerHTML); saveStash(); } }
+    function saveManual(idx, btn) { updateStash(idx); triggerMsg(btn.parentElement.querySelector('.inline-msg')); }
+    function deleteStash(idx) { stash.splice(idx, 1); saveStash(); renderStash(); }
+    function saveStash() { localStorage.setItem('commander_stash_v8_0', JSON.stringify(stash)); }
+    function clearAllStash() { if(confirm("確定要一忘皆空？")) { stash = []; saveStash(); renderStash(); } }
+    function copyDirect(btn) { executeNativeCopy(btn.closest('.item-wrapper').querySelector('.pure-content')); triggerMsg(btn.parentElement.querySelector('.inline-msg')); }
+    function copyStashDirect(idx, btn) { updateStash(idx); executeNativeCopy(document.querySelector(`.stash-card[data-index="${idx}"] .stash-content-editable`)); triggerMsg(btn.parentElement.querySelector('.inline-msg')); }
+    function copyFullPreview(btn) { const temp = document.createElement('div'); document.querySelectorAll('#outputArea .pure-content').forEach(c => temp.appendChild(c.cloneNode(true))); document.body.appendChild(temp); executeNativeCopy(temp); document.body.removeChild(temp); triggerMsg(btn.parentElement.querySelector('.inline-msg')); }
+    function copyAllStash(btn) { if(stash.length === 0) return; const temp = document.createElement('div'); stash.forEach(item => { temp.innerHTML += `<h3>${item.title}</h3>${item.html}<br><br>`; }); document.body.appendChild(temp); executeNativeCopy(temp); document.body.removeChild(temp); triggerMsg(document.getElementById('msg-stash-all')); }
+
+    function executeNativeCopy(el) {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        document.execCommand('copy');
+        sel.removeAllRanges();
+    }
+</script>
+</body>
+</html>
